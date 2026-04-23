@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --font-syncopate: "Syncopate", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --color-accent: #4facfe;
+  --color-bg-dark: #030303;
+  --color-text-dim: #888888;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500&display=swap');
+
+body {
+  background-color: var(--color-bg-dark);
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+.hero-model-container {
+  position: absolute;
+  right: 0;
+  top: 10%;
+  width: 50vw;
+  height: 80vh;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.8;
+  mix-blend-mode: screen;
+}
