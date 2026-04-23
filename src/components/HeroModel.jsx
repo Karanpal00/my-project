@@ -32,19 +32,36 @@ function DraggableSphere({ position, size = 1, color, transmission = false, dist
     return unsubscribe;
   }, [api]);
 
-  useFrame(() => {
+  const scale = useRef(1);
+  const outOfBoundsTime = useRef(0);
+
+  useFrame((state, delta) => {
+    // Dramatic scale-in animation
+    scale.current = THREE.MathUtils.lerp(scale.current, 1, 0.1);
+    if (ref.current) {
+      ref.current.scale.set(scale.current, scale.current, scale.current);
+    }
+
     // Bounds check to respawn items thrown off-screen
-    const boundX = viewport.width;
-    const boundY = viewport.height;
+    const boundX = viewport.width / 2 + size;
+    const boundY = viewport.height / 2 + size;
     
-    if (
-      Math.abs(pos.current[0]) > boundX || 
-      Math.abs(pos.current[1]) > boundY || 
-      Math.abs(pos.current[2]) > 10
-    ) {
-      api.position.set(position[0], position[1], position[2]);
-      api.velocity.set(0, 0, 0);
-      api.angularVelocity.set(0, 0, 0);
+    const isOut = Math.abs(pos.current[0]) > boundX || 
+                  Math.abs(pos.current[1]) > boundY || 
+                  pos.current[2] > 10 || pos.current[2] < -25;
+
+    if (isOut && !isDragging) {
+      outOfBoundsTime.current += delta;
+      if (outOfBoundsTime.current > 2) {
+        // Dramatic Respawn: Shoot in from deep space
+        api.position.set(position[0] + (Math.random() * 4 - 2), position[1] + (Math.random() * 4 - 2), -20);
+        api.velocity.set(Math.random() * 10 - 5, Math.random() * 10 - 5, 60); 
+        api.angularVelocity.set(Math.random() * 20, Math.random() * 20, Math.random() * 20);
+        scale.current = 0;
+        outOfBoundsTime.current = 0;
+      }
+    } else {
+      outOfBoundsTime.current = 0;
     }
 
     if (isDragging) {
